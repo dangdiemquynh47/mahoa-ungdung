@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Marcellus&display=swap");
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  font-family: "Playfair Display", serif !important;
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 110px;
+}
+
+.text-title {
+  font-family: "Playfair Display", serif !important;
+}
+
+.text-content {
+  font-family: "Marcellus", serif !important;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .shadow-right {
+    box-shadow: 5px 0px 5px -5px rgba(0, 0, 0, 0.3);
+  }
+  .bg-overlay2 {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 2.73%, rgba(255, 255, 255, 0) 31.66%, rgb(255, 255, 255, 0) 54.78%, #ab8965 100%);
+  }
+
+  .bg-footer {
+    background: var(--bg-dark-1);
+  }
+  .container-full {
+@apply container px-6 sm:px-20 2xl:px-0 mx-auto max-w-[1400px];
+  }
+
+  
+  .container-admin {
+    @apply container px-6 sm:px-10 mx-auto max-w-[1440px];
+  }
+
+  .bg-overlay {
+    background: rgba(0, 0, 0, 1);
+  }
+}
+
+.swiper-button-next {
+  color: #ab8965 !important;
+}
+
+.swiper-button-prev {
+  color: #ab8965 !important;
+}
+
+.swiper-pagination {
+  color: white !important;
+  text-align: end !important;
+  padding-right: 50px;
+  font-size: 1.25rem; /* 20px */
+  line-height: 1.75rem;
+  padding-bottom: 25px;
+}
