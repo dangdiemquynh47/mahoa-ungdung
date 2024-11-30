@@ -15,6 +15,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { axiosInstance } from "@/lib/axios";
+import {
+  decryptWithRSA,
+  encryptWithRSA,
+  privateKey_rsa_512,
+  publicKey_rsa_512,
+} from "@/lib/RSA_512";
 
 export function FormInfoDiem({ dataModal, action, masv }: any) {
   const FormSchema = z.object({
@@ -22,6 +28,9 @@ export function FormInfoDiem({ dataModal, action, masv }: any) {
     MAHP: z.string(),
     DIEMTHI: z.string(),
   });
+  // const DIEMTHIBuffer: any = dataModal?.DIEMTHI;
+  // const DIEMTHI = Buffer.from(DIEMTHIBuffer).toString("utf-8");
+  // const de = decryptWithRSA(DIEMTHI, privateKey_rsa_512);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -32,20 +41,19 @@ export function FormInfoDiem({ dataModal, action, masv }: any) {
     },
   });
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    const decryptDiemthi = encryptWithRSA(data.DIEMTHI, publicKey_rsa_512);
     const s = {
       MASV: data.MASV,
       MAHP: data.MAHP,
-      DIEMTHI: data.DIEMTHI,
+      DIEMTHI: decryptDiemthi,
     };
-
-    console.log(s);
 
     try {
       if (action === "create") {
-        const res = await axiosInstance.post("/sinhvien", data);
+        const res = await axiosInstance.post("/bangdiem", s);
         window.location.reload();
       } else if (action === "update") {
-        const res = await axiosInstance.patch(`/sinhvien/${data.MASV}`, data);
+        const res = await axiosInstance.patch(`/bangdiem/${data.MASV}`, s);
         console.log("udpate", res);
       }
       window.location.reload();
@@ -88,7 +96,7 @@ export function FormInfoDiem({ dataModal, action, masv }: any) {
                       className="w-[400px]"
                       placeholder="Mã học phần "
                       {...field}
-                      disabled={action === 'update'}
+                      disabled={action === "update"}
                     />
                   </FormControl>
                   <FormMessage />

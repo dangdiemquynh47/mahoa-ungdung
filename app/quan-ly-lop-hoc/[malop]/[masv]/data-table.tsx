@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { axiosInstance } from "@/lib/axios";
 import { FormInfoDiem } from "./form";
 import { Payment } from "./columns";
+import { decryptWithRSA, privateKey_rsa_512 } from "@/lib/RSA_512";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -39,10 +40,11 @@ export function DataTableDetail<TData, TValue>({
   const [action, setAction] = useState("");
   const [dataModal, setDataModal] = useState({});
   const columns: ColumnDef<Payment>[] = [
-    //   {
-    //     accessorKey: "STT",
-    //     header: "STT",
-    //   },
+    {
+      accessorKey: "STT",
+      header: "STT",
+      cell: ({ row }) => row.index + 1,
+    },
     {
       accessorKey: "MASV",
       header: "MASV",
@@ -54,6 +56,12 @@ export function DataTableDetail<TData, TValue>({
     {
       accessorKey: "DIEMTHI",
       header: "DIEMTHI",
+      cell: (info) => {
+        const DIEMTHIBuffer: any = info.getValue();
+        const DIEMTHI = Buffer.from(DIEMTHIBuffer).toString("utf-8");
+        const de = decryptWithRSA(DIEMTHI, privateKey_rsa_512);
+        return <div className="flex gap-2">{de}</div>;
+      },
     },
     {
       accessorKey: "ACTION",

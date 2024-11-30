@@ -15,24 +15,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { axiosInstance } from "@/lib/axios";
+import { hashSHA1 } from "@/lib/sha";
+import { encryptWithRSA, publicKey_rsa_512 } from "@/lib/RSA_512";
 
 export function FormInfoNhanVien({ dataModal, action }: any) {
   const FormSchema = z.object({
-    MANV: z.string().min(2, {
-      message: "Mã nhân viên phải có ít nhất 2 ký tự.",
-    }),
-    HOTEN: z.string().min(2, {
-      message: "Họ và tên phải có ít nhất 2 ký tự.",
-    }),
+    MANV: z.string(),
+    HOTEN: z.string(),
     LUONG: z.string(),
-    EMAIL: z.string().email({ message: "Email không hợp lệ." }),
+    EMAIL: z.string(),
     TENDN: z.string(),
-    MATKHAU: z.string().min(2, {
-      message: "Mật khẩu phải có ít nhất 2 ký tự.",
-    }),
-    PUBKEY: z.string().min(2, {
-      message: "Pubkey phải có ít nhất 2 ký tự.",
-    }),
+    MATKHAU: z.string(),
+    PUBKEY: z.string(),
   });
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -48,18 +42,22 @@ export function FormInfoNhanVien({ dataModal, action }: any) {
     },
   });
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    const mksha = hashSHA1(data.MATKHAU);
+    const decryptLuong = encryptWithRSA(data.LUONG, publicKey_rsa_512);
     const s = {
       MANV: data.MANV,
       HOTEN: data.HOTEN,
       EMAIL: data.EMAIL,
-      LUONG: data.LUONG,
+      LUONG: decryptLuong,
       TENDN: data.TENDN,
-      MATKHAU: data.MATKHAU,
+      MATKHAU: mksha,
       PUBKEY: data.PUBKEY,
     };
+    console.log(s);
+
     try {
       if (action === "create") {
-        const res = await axiosInstance.post("/nhanvien", data);
+        const res = await axiosInstance.post("/nhanvien", s);
       } else if (action === "update") {
         const res = await axiosInstance.patch(`/nhanvien/${data.MANV}`, data);
         console.log("udpate", res);
@@ -104,7 +102,6 @@ export function FormInfoNhanVien({ dataModal, action }: any) {
                       className="w-[400px]"
                       placeholder="Họ và tên "
                       {...field}
-                      
                     />
                   </FormControl>
                   <FormMessage />
@@ -122,7 +119,6 @@ export function FormInfoNhanVien({ dataModal, action }: any) {
                       className="w-[400px]"
                       placeholder="Email "
                       {...field}
-                      
                     />
                   </FormControl>
                   <FormMessage />
@@ -140,7 +136,6 @@ export function FormInfoNhanVien({ dataModal, action }: any) {
                       className="w-[400px]"
                       placeholder="Lương "
                       {...field}
-                      
                     />
                   </FormControl>
                   <FormMessage />
@@ -160,7 +155,6 @@ export function FormInfoNhanVien({ dataModal, action }: any) {
                       className="w-[400px]"
                       placeholder="Tên đăng nhập "
                       {...field}
-                      
                     />
                   </FormControl>
                   <FormMessage />
@@ -178,7 +172,6 @@ export function FormInfoNhanVien({ dataModal, action }: any) {
                       className="w-[400px]"
                       placeholder="Mật khẩu "
                       {...field}
-                      
                     />
                   </FormControl>
                   <FormMessage />
@@ -196,7 +189,6 @@ export function FormInfoNhanVien({ dataModal, action }: any) {
                       className="w-[400px]"
                       placeholder="Pubkey "
                       {...field}
-                      
                     />
                   </FormControl>
                   <FormMessage />

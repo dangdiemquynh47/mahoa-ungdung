@@ -1,21 +1,8 @@
 "use client";
-import {
-  House,
-  HousePlug,
-  UserRound,
-  Ticket,
-  Speech,
-  CircleDollarSign,
-  IdCard,
-  BarChart,
-  Star,
-  Building,
-  ShieldCheck,
-  Sofa,
-  CreditCard,
-} from "lucide-react";
+import { Star, CreditCard } from "lucide-react";
 import "./globals.css";
 import WrapDashBoard from "./wrap";
+import { usePathname } from "next/navigation";
 
 export default function RootLayout({
   children,
@@ -36,7 +23,6 @@ export default function RootLayout({
       icon: <Star className="w-6 h-6 stroke-white" />,
     },
   ];
-
   return (
     <html lang="vi">
       <body className="bg-white min-h-screen">

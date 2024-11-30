@@ -1,5 +1,5 @@
 import Image from "next/image";
-import LoginForm from "./login_form";
+import { FormInfoLogin } from "./login_form";
 
 const Page = () => {
   return (
@@ -21,7 +21,7 @@ const Page = () => {
         </p>
       </div>
       <div className="absolute top-[50%] -translate-y-[50%] right-0 w-[50%] flex items-center justify-center">
-        <LoginForm />
+        <FormInfoLogin />
       </div>
     </div>
   );

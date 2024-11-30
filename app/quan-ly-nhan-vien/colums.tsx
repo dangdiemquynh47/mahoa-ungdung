@@ -22,6 +22,7 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "STT",
     header: "STT",
+    cell: ({ row }) => row.index + 1,
   },
   {
     accessorKey: "MANV",

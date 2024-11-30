@@ -35,6 +35,8 @@ export const Class = ({ data }: any) => {
     const res = await axiosInstance.delete(`/lop/${malop}`);
     window.location.reload();
   };
+  const userJson: any = localStorage.getItem("user");
+  const user = userJson ? JSON.parse(userJson) : null;
 
   return (
     <div className="">
@@ -47,50 +49,61 @@ export const Class = ({ data }: any) => {
         Thêm lớp học
       </Button>
       <div className="grid grid-cols-4 gap-6 py-10">
-        {/* <DataTable columns={columns} data={data}/> */}
-        {data.map((item: any, index: number) => (
-          <div
-            key={index}
-            className="flex gap-2 p-3 h-full w-full border-[1px] border-solid border-primary rounded-md"
-          >
-            <div>
-              <p>Mã lớp: {item.MALOP}</p>
-              <p>Tên lớp: {item.TENLOP}</p>
-              <p>Mã nhân viên: {item.MANV}</p>
-            </div>
+        {data?.map((item: any, index: number) => {
+          return (
+            <div
+              key={index}
+              className="flex gap-2 p-3 h-full w-full border-[1px] border-solid border-primary rounded-md"
+            >
+              <div>
+                <p>Mã lớp: {item.MALOP}</p>
+                <p>Tên lớp: {item.TENLOP}</p>
+                <p>Mã nhân viên: {item.MANV}</p>
+              </div>
 
-            <TooltipProvider>
-              <Tooltip
-                open={openTooltip === item.MALOP}
-                onOpenChange={(open: any) => {
-                  setOpenTooltip(open ? item.MALOP : null); // Mở tooltip cho item.MALOP, đóng tooltip khi không mở
-                }}
-              >
-                <TooltipTrigger asChild>
-                  <Settings
-                    className="ml-auto w-6 h-6"
-                    onClick={() =>
-                      setOpenTooltip((prev) =>
-                        prev === item.MALOP ? null : item.MALOP
-                      )
-                    }
-                  />
-                </TooltipTrigger>
-                <TooltipContent className="bg-white flex flex-col gap-2">
-                  <Button
-                    onClick={() => {
-                      window.location.href = "/quan-ly-lop-hoc/" + item.MALOP;
-                    }}
-                  >
-                    Xem chi tiết
-                  </Button>
-                  <Button onClick={() => handleUpdate(item)}>Cập nhật</Button>
-                  <Button onClick={() => handleDelete(item.MALOP)}>Xoá</Button>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
-        ))}
+              <TooltipProvider>
+                <Tooltip
+                  open={openTooltip === item.MALOP}
+                  onOpenChange={(open: any) => {
+                    setOpenTooltip(open ? item.MALOP : null); // Mở tooltip cho item.MALOP, đóng tooltip khi không mở
+                  }}
+                >
+                  <TooltipTrigger asChild>
+                    <Settings
+                      className="ml-auto w-6 h-6"
+                      onClick={() =>
+                        setOpenTooltip((prev) =>
+                          prev === item.MALOP ? null : item.MALOP
+                        )
+                      }
+                    />
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-white flex flex-col gap-2">
+                    <Button
+                      onClick={() => {
+                        window.location.href = "/quan-ly-lop-hoc/" + item.MALOP;
+                      }}
+                    >
+                      Xem chi tiết
+                    </Button>
+                    <Button
+                      onClick={() => handleUpdate(item)}
+                      disabled={item.MANV !== user.MANV}
+                    >
+                      Cập nhật
+                    </Button>
+                    <Button
+                      onClick={() => handleDelete(item.MALOP)}
+                      disabled={item.MANV !== user.MANV}
+                    >
+                      Xoá
+                    </Button>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+          );
+        })}
       </div>
       <Modal isOpen={openModal} setOpen={handleForm} className="relative">
         <div className="w-fit bg-white mx-auto rounded-[12px] !p-0 !overflow-hidden">

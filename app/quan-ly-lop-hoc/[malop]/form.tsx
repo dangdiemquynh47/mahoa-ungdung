@@ -15,8 +15,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { axiosInstance } from "@/lib/axios";
+import { hashSHA1 } from "@/lib/sha";
 
-export function FormInfoLopHoc({ dataModal, action }: any) {
+export function FormInfoLopHoc({ dataModal, action, malop }: any) {
   const FormSchema = z.object({
     MASV: z.string(),
     HOTEN: z.string(),
@@ -34,12 +35,13 @@ export function FormInfoLopHoc({ dataModal, action }: any) {
       HOTEN: dataModal?.HOTEN ?? "",
       DIACHI: dataModal?.DIACHI ?? "",
       NGAYSINH: dataModal?.NGAYSINH ?? "",
-      MALOP: dataModal?.MALOP ?? "",
+      MALOP: malop ?? "",
       TENDN: dataModal?.TENDN ?? "",
       MATKHAU: dataModal?.MATKHAU ?? "",
     },
   });
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
+    const mksha = hashSHA1(data.MATKHAU) || "";
     const s = {
       MASV: data.MASV,
       HOTEN: data.HOTEN,
@@ -47,17 +49,15 @@ export function FormInfoLopHoc({ dataModal, action }: any) {
       DIACHI: data.DIACHI,
       MALOP: data.MALOP,
       TENDN: data.TENDN,
-      MATKHAU: data.MATKHAU,
+      MATKHAU: mksha,
     };
 
-    console.log(s);
-    
     try {
       if (action === "create") {
-        const res = await axiosInstance.post("/sinhvien", data);
+        const res = await axiosInstance.post("/sinhvien", s);
         window.location.reload();
       } else if (action === "update") {
-        const res = await axiosInstance.patch(`/sinhvien/${data.MASV}`, data);
+        const res = await axiosInstance.patch(`/sinhvien/${data.MASV}`, s);
         console.log("udpate", res);
       }
       window.location.reload();
@@ -152,6 +152,7 @@ export function FormInfoLopHoc({ dataModal, action }: any) {
                     <Input
                       className="w-[400px]"
                       placeholder="Mã lớp "
+                      disabled
                       {...field}
                     />
                   </FormControl>
@@ -197,6 +198,7 @@ export function FormInfoLopHoc({ dataModal, action }: any) {
             <Button
               type="submit"
               //   onClick={form.handleSubmit(onSubmit)}
+              // disabled={}
               className="text-white w-[200px] ml-auto text-xl"
             >
               {action === "create" ? "Tạo sinh viên" : "Cập nhật sinh viên"}

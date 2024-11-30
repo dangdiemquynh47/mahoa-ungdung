@@ -24,6 +24,7 @@ import { Payment } from "./colums";
 import { axiosInstance } from "@/lib/axios";
 import { decodeBufferAndHash } from "@/lib/decode-sha1";
 import { encryptWithRSA512 } from "@/lib/rsa-512";
+import { decryptWithRSA, privateKey_rsa_512 } from "@/lib/RSA_512";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -40,8 +41,9 @@ export function DataTable<TData, TValue>({
     {
       accessorKey: "STT",
       header: "STT",
-      
+      cell: ({ row }) => row.index + 1,
     },
+
     {
       accessorKey: "MANV",
       header: "MANV",
@@ -57,16 +59,12 @@ export function DataTable<TData, TValue>({
     {
       accessorKey: "LUONG",
       header: "LUONG",
-//       cell: (info) => {
-//         const puclickey = `-----BEGIN PUBLIC KEY-----
-// ${info.row.original.PUBKEY}
-// -----END PUBLIC KEY-----`;
-//         return (
-//           <div className="flex gap-2">
-//             {encryptWithRSA512(info.getValue(), puclickey)}
-//           </div>
-//         );
-//       },
+      cell: (info) => {
+        const LUONGBuffer: any = info.getValue();
+        const LUONG = Buffer.from(LUONGBuffer).toString("utf-8");
+        const de = decryptWithRSA(LUONG, privateKey_rsa_512);
+        return <div className="flex gap-2">{de} VNĐ</div>;
+      },
     },
     {
       accessorKey: "TENDN",
@@ -128,8 +126,9 @@ export function DataTable<TData, TValue>({
     setDataModal({});
     setOpenModal(!openModal);
   };
-  console.log(dataModal);
 
+  const userJson: any = localStorage.getItem("user");
+  const user = userJson ? JSON.parse(userJson) : null;
   return (
     <div className="">
       <div className="flex py-6">
