@@ -24,9 +24,11 @@ const Page = async ({ params }: any) => {
     return acc;
   }, {});
 
+
+
   return (
     <div className="">
-      <DataTable columns={columns} data={result[malop]} malop={malop}/>
+      <DataTable columns={columns} data={result[malop]} malop={malop} />
     </div>
   );
 };
