@@ -17,12 +17,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { axiosInstance } from "@/lib/axios";
 import { decodeBufferAndHash } from "@/lib/decode-sha1";
 import { FormInfoLopHoc } from "./form";
 import { Payment } from "./columns";
+import { useParams } from "next/navigation";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -37,6 +38,29 @@ export function DataTable<TData, TValue>({
   const [openModal, setOpenModal] = useState(false);
   const [action, setAction] = useState("");
   const [dataModal, setDataModal] = useState({});
+
+  
+  const [classData, setClassData] = useState(null);
+
+  useEffect(() => {
+    // Gọi API để lấy thông tin lớp theo malop
+    const fetchClassData = async () => {
+      try {
+        const response: any = await axiosInstance.get(`/lop/${malop}`);
+        setClassData(response.MANV);
+      } catch (error) {
+        console.error("Error fetching class data:", error);
+      }
+    };
+
+    fetchClassData();
+  }, [malop]);
+
+  const userJson: any = localStorage.getItem("user");
+  const user = userJson ? JSON.parse(userJson) : null;
+
+  const isNV = classData === user.MANV;
+
   const columns: ColumnDef<Payment>[] = [
     {
       accessorKey: "STT",
@@ -107,10 +131,10 @@ export function DataTable<TData, TValue>({
 
         return (
           <div className="flex gap-2">
-            <Button variant="secondary" size="sm" onClick={handleUpdate}>
+            <Button variant="secondary" size="sm" disabled={isNV} onClick={handleUpdate}>
               Update
             </Button>
-            <Button variant="destructive" size="sm" onClick={handleDelete}>
+            <Button variant="destructive" size="sm" disabled={isNV} onClick={handleDelete}>
               Delete
             </Button>
             <Button variant="destructive" size="sm" onClick={seeScore}>
@@ -131,7 +155,6 @@ export function DataTable<TData, TValue>({
     setDataModal({});
     setOpenModal(!openModal);
   };
-  console.log(dataModal);
 
   return (
     <div className="">
@@ -140,6 +163,7 @@ export function DataTable<TData, TValue>({
           onClick={() => {
             setAction("create"), setOpenModal(true);
           }}
+          disabled={isNV}
           className="text-white w-[200px] ml-auto text-xl"
         >
           Tạo sinh viên

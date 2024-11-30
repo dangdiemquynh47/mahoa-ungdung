@@ -1,4 +1,5 @@
 import forge from "node-forge";
+import * as crypto from "crypto";
 
 /**
  * Mã hóa SHA1 một chuỗi
@@ -12,4 +13,8 @@ export const hashSHA1 = (data: string): string => {
 
   // Trả về hash dưới dạng hex (chuỗi hexadecimal)
   return md.digest().toHex();
+};
+
+export const hashPassword = (password: string) => {
+  return crypto.createHash("sha1").update(password).digest();
 };

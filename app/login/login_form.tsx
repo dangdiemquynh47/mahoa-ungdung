@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { axiosInstance } from "@/lib/axios";
-import { hashSHA1 } from "@/lib/sha";
+import { hashPassword, hashSHA1 } from "@/lib/sha";
 
 export function FormInfoLogin({ dataModal, action }: any) {
   const FormSchema = z.object({
@@ -30,13 +30,16 @@ export function FormInfoLogin({ dataModal, action }: any) {
     },
   });
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    const mksha = hashSHA1(data.MATKHAU);    
+    const pasB = hashPassword(data.MATKHAU);
+    const mksha = Buffer.from(pasB).toString("utf8");
+    console.log("mksha", mksha);
+    
     const s = {
       TENDN: data.TENDN,
       MATKHAU: mksha,
     };
     try {
-      const res = await axiosInstance.post("/auth/login", data);      
+      const res = await axiosInstance.post("/auth/login", s);
       localStorage.setItem("user", JSON.stringify(res.data)); // Chuyển dữ liệu thành chuỗi JSON
       window.location.href = "/quan-ly-lop-hoc";
     } catch (error: any) {

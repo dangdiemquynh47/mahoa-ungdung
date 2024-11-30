@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { axiosInstance } from "@/lib/axios";
-import { hashSHA1 } from "@/lib/sha";
+import { hashPassword, hashSHA1 } from "@/lib/sha";
 import { encryptWithRSA, publicKey_rsa_512 } from "@/lib/RSA_512";
 
 export function FormInfoNhanVien({ dataModal, action }: any) {
@@ -42,7 +42,8 @@ export function FormInfoNhanVien({ dataModal, action }: any) {
     },
   });
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    const mksha = hashSHA1(data.MATKHAU);
+    const pasB = hashPassword(data.MATKHAU);    
+    const mksha = Buffer.from(pasB).toString("utf8");
     const decryptLuong = encryptWithRSA(data.LUONG, publicKey_rsa_512);
     const s = {
       MANV: data.MANV,
