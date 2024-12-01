@@ -18,43 +18,45 @@ export const Header = () => {
   );
   const role = localStorage.getItem("role");
 
-  const getRoleDetails = () => {
-    switch (role) {
-      case "ADMIN":
-        return {
-          title: "Quản lý",
-          icon: <ShieldCheck className="w-8 h-8 text-blue-600" />,
-          bgClass: "bg-gradient-to-r from-blue-100 to-blue-200",
-          textClass: "text-blue-900",
-          description: "Toàn quyền quản trị hệ thống",
-        };
-      case "EMPLOYEE":
-        return {
-          title: "Nhân viên",
-          icon: <UserCheck className="w-8 h-8 text-green-600" />,
-          bgClass: "bg-gradient-to-r from-green-100 to-green-200",
-          textClass: "text-green-900",
-          description: "Thực thi nhiệm vụ chuyên môn",
-        };
-      default:
-        return {
-          title: "Chưa xác định",
-          icon: <HelpCircle className="w-8 h-8 text-gray-600" />,
-          bgClass: "bg-gradient-to-r from-gray-100 to-gray-200",
-          textClass: "text-gray-900",
-          description: "Chưa được phân quyền",
-        };
-    }
-  };
+  const userJson: any = localStorage.getItem("user");
+  const user = userJson ? JSON.parse(userJson) : null;
 
-  const roleDetails = getRoleDetails();
+  // const getRoleDetails = () => {
+  //   switch (role) {
+  //     case "ADMIN":
+  //       return {
+  //         title: "Quản lý",
+  //         icon: <ShieldCheck className="w-8 h-8 text-blue-600" />,
+  //         bgClass: "bg-gradient-to-r from-blue-100 to-blue-200",
+  //         textClass: "text-blue-900",
+  //         description: "Toàn quyền quản trị hệ thống",
+  //       };
+  //     case "EMPLOYEE":
+  //       return {
+  //         title: "Nhân viên",
+  //         icon: <UserCheck className="w-8 h-8 text-green-600" />,
+  //         bgClass: "bg-gradient-to-r from-green-100 to-green-200",
+  //         textClass: "text-green-900",
+  //         description: "Thực thi nhiệm vụ chuyên môn",
+  //       };
+  //     default:
+  //       return {
+  //         title: "Chưa xác định",
+  //         icon: <HelpCircle className="w-8 h-8 text-gray-600" />,
+  //         bgClass: "bg-gradient-to-r from-gray-100 to-gray-200",
+  //         textClass: "text-gray-900",
+  //         description: "Chưa được phân quyền",
+  //       };
+  //   }
+  // };
+
+  // const roleDetails = getRoleDetails();
 
   return (
     <div className="flex items-center gap-20 border-b-[1px] border-solid border-neutral-300 px-10 bg-white relative">
       <div className="w-full min-h-[70px] py-1">
         <div
           className={`
-      ${roleDetails.bgClass} 
       rounded-md  
       shadow-sm  
       hover:shadow-md 
@@ -71,17 +73,18 @@ export const Header = () => {
         >
           {/* Icon */}
           <div className="bg-white rounded-full p-1 shadow-sm">
-            {roleDetails.icon}
+            {/* {roleDetails.icon} */}
           </div>
 
           {/* Thông tin chức vụ */}
           <div className="flex-1">
-            <div className={`font-semibold text-sm ${roleDetails.textClass}`}>
+            {/* <div className={`font-semibold text-sm ${roleDetails.textClass}`}>
               Chức vụ: {roleDetails.title}
             </div>
             <p className={`text-[10px] ${roleDetails.textClass} opacity-70`}>
               {roleDetails.description}
-            </p>
+            </p> */}
+            NV: {user?.MANV}
           </div>
 
           {/* Badge quyền hạn */}

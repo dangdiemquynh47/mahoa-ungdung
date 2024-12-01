@@ -37,6 +37,7 @@ export const Class = ({ data }: any) => {
   };
   const userJson: any = localStorage.getItem("user");
   const user = userJson ? JSON.parse(userJson) : null;
+  console.log("user ql lop", user);
 
   return (
     <div className="">
@@ -117,6 +118,7 @@ export const Class = ({ data }: any) => {
                 data={data}
                 action={action}
                 dataModal={dataModal}
+                user={user}
               />
             </div>
           </div>

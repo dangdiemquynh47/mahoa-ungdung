@@ -39,7 +39,6 @@ export function DataTable<TData, TValue>({
   const [action, setAction] = useState("");
   const [dataModal, setDataModal] = useState({});
 
-  
   const [classData, setClassData] = useState(null);
 
   useEffect(() => {
@@ -60,6 +59,8 @@ export function DataTable<TData, TValue>({
   const user = userJson ? JSON.parse(userJson) : null;
 
   const isNV = classData === user.MANV;
+  console.log(isNV);
+  
 
   const columns: ColumnDef<Payment>[] = [
     {
@@ -131,10 +132,20 @@ export function DataTable<TData, TValue>({
 
         return (
           <div className="flex gap-2">
-            <Button variant="secondary" size="sm" disabled={isNV} onClick={handleUpdate}>
+            <Button
+              variant="secondary"
+              size="sm"
+              disabled={isNV ? false : true}
+              onClick={handleUpdate}
+            >
               Update
             </Button>
-            <Button variant="destructive" size="sm" disabled={isNV} onClick={handleDelete}>
+            <Button
+              variant="destructive"
+              size="sm"
+              disabled={isNV ? false : true}
+              onClick={handleDelete}
+            >
               Delete
             </Button>
             <Button variant="destructive" size="sm" onClick={seeScore}>
@@ -156,6 +167,7 @@ export function DataTable<TData, TValue>({
     setOpenModal(!openModal);
   };
 
+  console.log("user ql chi tiet lop", user);
   return (
     <div className="">
       <div className="flex py-6">
@@ -163,7 +175,7 @@ export function DataTable<TData, TValue>({
           onClick={() => {
             setAction("create"), setOpenModal(true);
           }}
-          disabled={isNV}
+          disabled={isNV ? false : true}
           className="text-white w-[200px] ml-auto text-xl"
         >
           Tạo sinh viên

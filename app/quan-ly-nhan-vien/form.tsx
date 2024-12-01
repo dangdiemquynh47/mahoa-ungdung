@@ -15,8 +15,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { axiosInstance } from "@/lib/axios";
-import { hashPassword, hashSHA1 } from "@/lib/sha";
-import { encryptWithRSA, publicKey_rsa_512 } from "@/lib/RSA_512";
+import {
+  decryptWithRSA,
+  encryptWithRSA,
+  privateKey_rsa_512,
+  publicKey_rsa_512,
+} from "@/lib/RSA_512";
+import { hashPassword } from "@/lib/sha.hash";
+import { decodeBufferAndHash } from "@/lib/decode-sha1";
 
 export function FormInfoNhanVien({ dataModal, action }: any) {
   const FormSchema = z.object({
@@ -29,21 +35,32 @@ export function FormInfoNhanVien({ dataModal, action }: any) {
     PUBKEY: z.string(),
   });
 
+  const LUONG =
+    action === "create"
+      ? ""
+      : Buffer.from(dataModal?.LUONG, "hex").toString("utf-8");
+  const de =
+    action === "create"
+      ? dataModal?.LUONG
+      : decryptWithRSA(LUONG, privateKey_rsa_512);
+
+  const MATKHAU =
+    action === "create" ? "" : decodeBufferAndHash(dataModal?.MATKHAU);
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       MANV: dataModal?.MANV ?? "",
       HOTEN: dataModal?.HOTEN ?? "",
       EMAIL: dataModal?.EMAIL ?? "",
-      LUONG: dataModal?.LUONG ?? "",
+      LUONG: de,
       TENDN: dataModal?.TENDN ?? "",
-      MATKHAU: dataModal?.MATKHAU ?? "",
+      MATKHAU: MATKHAU,
       PUBKEY: dataModal?.PUBKEY ?? "",
     },
   });
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    const pasB = hashPassword(data.MATKHAU);    
-    const mksha = Buffer.from(pasB).toString("utf8");
+    const mksha = hashPassword(data.MATKHAU);
     const decryptLuong = encryptWithRSA(data.LUONG, publicKey_rsa_512);
     const s = {
       MANV: data.MANV,
@@ -54,11 +71,11 @@ export function FormInfoNhanVien({ dataModal, action }: any) {
       MATKHAU: mksha,
       PUBKEY: data.PUBKEY,
     };
-    console.log(s);
 
     try {
       if (action === "create") {
         const res = await axiosInstance.post("/nhanvien", s);
+        console.log("res", res);
       } else if (action === "update") {
         const res = await axiosInstance.patch(`/nhanvien/${data.MANV}`, data);
         console.log("udpate", res);
@@ -190,6 +207,7 @@ export function FormInfoNhanVien({ dataModal, action }: any) {
                       className="w-[400px]"
                       placeholder="Pubkey "
                       {...field}
+                      disabled={action === "create" ? false : true}
                     />
                   </FormControl>
                   <FormMessage />

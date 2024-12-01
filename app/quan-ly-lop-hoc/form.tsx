@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { axiosInstance } from "@/lib/axios";
 
-export function FormInfoClass({ dataModal, action }: any) {
+export function FormInfoClass({ dataModal, action, user }: any) {
   const FormSchema = z.object({
     MALOP: z.string().min(2, {
       message: "Mã lớp phải có ít nhất 2 ký tự.",
@@ -28,13 +28,13 @@ export function FormInfoClass({ dataModal, action }: any) {
       message: "Mã nhân viên phải có ít nhất 2 ký tự.",
     }),
   });
-
+const manv = user.MANV
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       MALOP: dataModal?.MALOP ?? "",
       TENLOP: dataModal?.TENLOP ?? "",
-      MANV: dataModal?.MANV ?? "",
+      MANV: manv ?? "",
     },
   });
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
@@ -109,6 +109,7 @@ export function FormInfoClass({ dataModal, action }: any) {
                       className="w-[400px]"
                       placeholder="MANV "
                       {...field}
+                      disabled
                     />
                   </FormControl>
                   <FormMessage />

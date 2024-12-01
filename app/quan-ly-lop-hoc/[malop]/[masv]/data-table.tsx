@@ -17,7 +17,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { axiosInstance } from "@/lib/axios";
 import { FormInfoDiem } from "./form";
@@ -39,6 +39,26 @@ export function DataTableDetail<TData, TValue>({
   const [openModal, setOpenModal] = useState(false);
   const [action, setAction] = useState("");
   const [dataModal, setDataModal] = useState({});
+
+  const [classData, setClassData] = useState(null);
+  const userJson: any = localStorage.getItem("user");
+  const user = userJson ? JSON.parse(userJson) : null;
+
+  useEffect(() => {
+    // Gọi API để lấy thông tin lớp theo malop
+    const fetchClassData = async () => {
+      try {
+        const response: any = await axiosInstance.get(`/lop/${malop}`);
+        setClassData(response.MANV);
+      } catch (error) {
+        console.error("Error fetching class data:", error);
+      }
+    };
+
+    fetchClassData();
+  }, [malop]);
+  const isNV = classData === user.MANV;
+  console.log(isNV);
   const columns: ColumnDef<Payment>[] = [
     {
       accessorKey: "STT",
@@ -83,10 +103,20 @@ export function DataTableDetail<TData, TValue>({
 
         return (
           <div className="flex gap-2">
-            <Button variant="secondary" size="sm" onClick={handleUpdate}>
+            <Button
+              variant="secondary"
+              disabled={isNV ? false : true}
+              size="sm"
+              onClick={handleUpdate}
+            >
               Update
             </Button>
-            <Button variant="destructive" size="sm" onClick={handleDelete}>
+            <Button
+              variant="destructive"
+              disabled={isNV ? false : true}
+              size="sm"
+              onClick={handleDelete}
+            >
               Delete
             </Button>
           </div>
@@ -113,6 +143,7 @@ export function DataTableDetail<TData, TValue>({
           onClick={() => {
             setAction("create"), setOpenModal(true);
           }}
+          disabled={isNV ? false : true}
           className="text-white w-[200px] ml-auto text-xl"
         >
           Nhập điểm

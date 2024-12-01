@@ -28,16 +28,23 @@ export function FormInfoDiem({ dataModal, action, masv }: any) {
     MAHP: z.string(),
     DIEMTHI: z.string(),
   });
-  // const DIEMTHIBuffer: any = dataModal?.DIEMTHI;
-  // const DIEMTHI = Buffer.from(DIEMTHIBuffer).toString("utf-8");
+
   // const de = decryptWithRSA(DIEMTHI, privateKey_rsa_512);
+  const DIEMTHI =
+    action === "create"
+      ? ""
+      : Buffer.from(dataModal?.DIEMTHI, "hex").toString("utf-8");
+  const de =
+    action === "create"
+      ? dataModal?.DIEMTHI
+      : decryptWithRSA(DIEMTHI, privateKey_rsa_512);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       MASV: masv,
       MAHP: dataModal?.MAHP ?? "",
-      DIEMTHI: dataModal?.DIEMTHI ?? "",
+      DIEMTHI: de,
     },
   });
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
